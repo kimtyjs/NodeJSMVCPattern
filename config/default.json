@@ -1,0 +1,3 @@
+{
+    "mongoURL": "mongodb+srv://crudnode:crudenode@cluster0.atm3y.mongodb.net/<dbname>?retryWrites=true&w=majority"
+}
