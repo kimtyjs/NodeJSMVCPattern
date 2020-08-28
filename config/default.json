@@ -1,3 +1,4 @@
 {
-    "mongoURL": "mongodb+srv://crudnode:crudenode@cluster0.atm3y.mongodb.net/<dbname>?retryWrites=true&w=majority"
+    "mongoURL": "mongodb+srv://crudnode:crudenode@cluster0.atm3y.mongodb.net/<dbname>?retryWrites=true&w=majority",
+    "jwtSecret": "IIBOgIBAAJBAIPTFaJ83Wwr7vNKZy1BimKstGZUHHmXr0TSy1LEi623Yo5zt1s2\niwK27bWM0EAd6NMqqyJhtU5sRJBzRMAC1w0CAwEAAQJAbYuzNdUnt+WGa1zQAtat\nJjS4sTSCeTTo7HtzhTNZk6BUtk2XtDPdoFMHSr1Ij5OBvRdgSLAelr78yiLOUG+u\nYQIhANlwSMeOO4oaL+8otmnKhhv/DXxOApDlVXQ7OFySTScZAiEAmzPrtD1/EDZt\nbyi50uTKUiAtwp3S6FeOzcVAlUqh8hUCIHufBwHNr7QYp2AFeZA0AIMyQuyFPZg7\nipYGhUi8NPkhAiEAjYH3hK0Vb0jQ2qs9UqY8OkkQsAOKS0GZ+M/CpNwZcEkCIDkk\n2n/HsmpfrH4P5GNXtNbwLRHC5Otk7B2X2pIAi2M2"
 }

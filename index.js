@@ -7,7 +7,6 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const chalk = require("chalk")
 const cors = require("cors")
-const jsDom = require("jsdom")
 const connectDb = require("./config/databaseConnection")
 const userRoute = require("./routes/user")
 

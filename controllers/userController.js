@@ -1,9 +1,6 @@
-const express = require("express")
-const router = express.Router()
 const User = require("../models/User")
 const bcrypt = require("bcryptjs")
-const validator = require("validator")
-
+const generateToken = require("../utils/accountToken")
 
 const index = (req, res) => {
 
@@ -15,59 +12,96 @@ const index = (req, res) => {
                 message: error.message || "No users found ..."
             })
     })
+}
+
+const register = async (req, res) => {
+
+    const { name, email, password } = req.body
+    const round = 10
+
+    try {
+        let isEmail = await User.findOne({ email: email })
+        if (isEmail) await res.status(400).json({
+            errors: [{
+                msg: `This ${ email } Already Exists`
+            }]
+        })
+
+        const user = new User({ name, email, password })
+        const salt = await bcrypt.genSalt(round)
+        user.password = await bcrypt.hashSync(password, salt)
+        await user.save()
+
+        const payload = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            password: user.password
+        }
+
+        //generate token after successfully create account
+        generateToken(res, payload)
+
+    } catch (error) {
+        console.error(error.message)
+        res.status(500).send("server error")
+    }
 
 }
 
-const login = (req, res) => {
+const login = async (req, res) => {
 
-     //validate user
-     if (!req.body.name) {
-         return res.status(400).send({
-             message: "User name cannot be empty!"
-         })
-     }
+    const { email, password } = req.body
 
+    try {
+        let user = await User.findOne({ email })
+        if(!user)  return res.status(400).json({
+            errors: [{
+                msg: `This ${ email } Is Invalided ...`
+            }]
+        })
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if(!isPasswordMatch) return res.json({
+            errors: [{
+                msg: "Password does not Match our Record"
+            }]
+        })
 
-     if (!validator.isEmail(req.body.email)) {
-         return res.status(400).send({
-             message: "E-mail is invalid",
-         })
-     }
+        res.json({
+            message: "Login successfully",
+            data: user
+        })
 
-     if (req.body.password.length < 8 || req.body.password.length === 0) {
-         return res.status(400).send({
-             message: "Password is invalid, or at least 8 chars",
-         })
-     }
-
-     //store user
-     const user = new User({
-         name: req.body.name,
-         email: req.body.email,
-         password: req.body.password
-     })
-
-     //saving user into Database
-     user.save()
-         .then(data => {
-             res.send(data)
-         }).catch(error => {
-             res.status(500).send({
-                 message: error.message || "user cannot be saved ..."
-             })
-         })
-    
-
+    } catch (error) {
+        console.error(error.message)
+        res.status(500).send("server error")
+    }
 }
 
-//To Do: https://github.com/LinusMuema/node-authentication-api/tree/mvc
+const getUserByToken = async (req, res) => {
 
+    try {
+        const user = await User.findById(req.user.id).select("-password")
+        await res.json(user)
+
+    } catch(error) {
+        console.error(error.message);
+        res.status(500).send("Server error");
+    }
+}
 
 module.exports = {
 
     index,
-    login
+    register,
+    login,
+    getUserByToken
 
 }
 
 //link reference; https://www.javaguides.net/2020/02/nodejs-express-and-mongodb-restful-crud-api-tutorial.html
+
+//https://dev.to/gethackteam/from-higher-order-components-hoc-to-react-hooks-2bm9
+//https://www.freecodecamp.org/news/how-to-develop-your-react-superpowers-with-the-hoc-pattern-61293651d59/
+//https://www.freecodecamp.org/news/react-superpowers-container-pattern-20d664bdae65/
+//https://codeforgeek.com/refresh-token-jwt-nodejs-authentication/
